@@ -24,13 +24,15 @@ function Login() {
         event.preventDefault();
         
         doLogin(email, password)
-            .then(isValid => {
-                if (isValid){
+            .then(response => {
+                if (response){
+                    localStorage.setItem('token', response.token);
                     history.push('/settings');
                 }
             })
             .catch(err => {
-                setError(err);
+                console.error(err);
+                setError(`Email ou a senha estão inválidos!`);
             })
 
     }
