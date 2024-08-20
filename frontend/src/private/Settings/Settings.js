@@ -5,7 +5,7 @@ import { doLogout } from '../../services/AuthService';
 
 function Settings() {
 
-    const history = useHistory();
+    const history = useHistory('');
 
     const [error, setError] = useState('');
 

@@ -2,7 +2,6 @@ import React from "react";
 import { Route, BrowserRouter, Redirect } from 'react-router-dom';
 import Login from "./public/Login/Login";
 import Settings from "./private/Settings/Settings";
-import { Router } from "react-router-dom/cjs/react-router-dom.min";
 
 function Routes() {
 
