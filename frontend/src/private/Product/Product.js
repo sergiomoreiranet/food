@@ -1,114 +1,121 @@
-import React, { useState } from 'react';
-import ProductService from '../../services/ProductService'; // Ajuste o caminho conforme necessário
+import React, { useState, useRef } from 'react';
+import ProductService from '../../services/ProductService';
 import Menu from '../../components/Menu/Menu';
-import '../ProductForm.css';
 
-function ProductForm() {
-    const [product, setProduct] = useState({
-        nome: '',
-        descricao: '',
-        preco: '',
-        categoria: '',
-        quantidade: ''
-    });
+function Product() {
+    const inputName = useRef('');
+    const inputDescription = useRef('');
+    const inputPrice = useRef('');
+    const inputCategory = useRef('');
+    const inputQuantity = useRef('');
 
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setProduct(prevProduct => ({
-            ...prevProduct,
-            [name]: value
-        }));
-    };
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
-    const handleSubmit = async (event) => {
+    async function onFormSubmit(event) {
         event.preventDefault();
-        alert("Formulário enviado!"); // Adicione isto para verificar se a submissão está ocorrendo
-        console.log("Produto:", product);
+        console.log("Formulário submetido"); // Verifica se a função é chamada
+
+        const token = localStorage.getItem('token');
+
         try {
-            const token = 'your-auth-token'; // Substitua pelo seu token de autenticação
-            await ProductService.createProduct(product, token);
-            alert('Produto cadastrado com sucesso!');
-            setProduct({
-                nome: '',
-                descricao: '',
-                preco: '',
-                categoria: '',
-                quantidade: ''
-            });
+            // Prepare o objeto productData
+            const productData = {
+                name: inputName.current.value,
+                description: inputDescription.current.value,
+                price: parseFloat(inputPrice.current.value),
+                category: inputCategory.current.value,
+                quantity: parseInt(inputQuantity.current.value, 10)
+            };
+
+            console.log("Dados do produto:", productData); // Verifica os dados que estão sendo enviados
+
+            // Envie os dados para o serviço
+            const result = await ProductService.createProduct(productData, token);
+
+            console.log("Produto criado com sucesso:", result);
+            setError('');
+            setSuccess('Produto criado com sucesso!');
         } catch (error) {
-            console.error('Erro ao cadastrar o produto:', error);
-            alert('Erro ao cadastrar o produto.');
+            console.error("Erro ao criar produto:", error);
+            setSuccess('');
+            setError('Não foi possível criar o produto.');
         }
-    };
+    }
 
     return (
         <React.Fragment>
             <Menu />
             <main className="content">
-                <div className="form-container">
-                    <h1>Cadastrar Produto</h1>
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-group">
-                            <label htmlFor="nome">Nome do Produto:</label>
-                            <input
-                                type="text"
-                                id="nome"
-                                name="nome"
-                                value={product.nome}
-                                onChange={handleChange}
-                                placeholder="Nome do produto"
-                            />
+                <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+                    <div className="d-block mb-4 mb-md-0">
+                        <h1 className="h4">Cadastrar Produto</h1>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-12">
+                        <div className="card card-body border-0 shadow mb-4">
+                            <h2 className="h5 mb-4">Preencha os dados do produto</h2>
+                            <form onSubmit={onFormSubmit}>
+                                <div className="row">
+                                    <div className="col-md-6 mb-3">
+                                        <div className="form-group">
+                                            <label htmlFor="name">Nome do Produto</label>
+                                            <input ref={inputName} className="form-control" id="name" type="text" placeholder="Digite o nome do produto" />
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6 mb-3">
+                                        <div className="form-group">
+                                            <label htmlFor="description">Descrição</label>
+                                            <input ref={inputDescription} className="form-control" id="description" type="text" placeholder="Digite a descrição do produto" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-6 mb-3">
+                                        <div className="form-group">
+                                            <label htmlFor="price">Preço</label>
+                                            <input ref={inputPrice} className="form-control" id="price" type="number" step="0.01" placeholder="Digite o preço" />
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6 mb-3">
+                                        <div className="form-group">
+                                            <label htmlFor="category">Categoria</label>
+                                            <input ref={inputCategory} className="form-control" id="category" type="text" placeholder="Digite a categoria" />
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6 mb-3">
+                                        <div className="form-group">
+                                            <label htmlFor="quantity">Quantidade</label>
+                                            <input ref={inputQuantity} className="form-control" id="quantity" type="number" placeholder="Digite a quantidade" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="d-flex justify-content-between flex-wrap flex-md-nowrap">
+                                        <div className="col-sm-3">
+                                            <button className="btn btn-gray-800 mt-2 animate-up-2" type="submit">Cadastrar Produto</button>
+                                        </div>
+                                        
+                                        {
+                                            error ?
+                                                <div className="alert alert-danger mt-2 col-9 py-2">{error}</div>
+                                                : <React.Fragment></React.Fragment>
+                                        }
+                                        {
+                                            success ?
+                                                <div className="alert alert-success mt-2 col-9 py-2">{success}</div>
+                                                : <React.Fragment></React.Fragment>
+                                        }
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                        <div className="form-group">
-                            <label htmlFor="descricao">Descrição:</label>
-                            <textarea
-                                id="descricao"
-                                name="descricao"
-                                value={product.descricao}
-                                onChange={handleChange}
-                                placeholder="Descrição do produto"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="preco">Preço:</label>
-                            <input
-                                type="number"
-                                id="preco"
-                                name="preco"
-                                value={product.preco}
-                                onChange={handleChange}
-                                placeholder="Preço do produto"
-                                step="0.01"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="categoria">Categoria:</label>
-                            <input
-                                type="text"
-                                id="categoria"
-                                name="categoria"
-                                value={product.categoria}
-                                onChange={handleChange}
-                                placeholder="Categoria do produto"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="quantidade">Quantidade:</label>
-                            <input
-                                type="number"
-                                id="quantidade"
-                                name="quantidade"
-                                value={product.quantidade}
-                                onChange={handleChange}
-                                placeholder="Quantidade disponível"
-                            />
-                        </div>
-                        <button type="submit" className="submit-button">Cadastrar</button>
-                    </form>
+                    </div>
                 </div>
             </main>
         </React.Fragment>
     );
 }
 
-export default ProductForm;
+export default Product;

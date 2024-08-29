@@ -1,4 +1,4 @@
-const Product = require('../models/productModel'); // Ajuste o caminho para o seu modelo
+const Product = require('../models/productModel');
 
 // Função para obter um produto por ID
 function getProductById(id) {

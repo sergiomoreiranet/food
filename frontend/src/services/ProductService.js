@@ -2,12 +2,11 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-// Exportação padrão
 const ProductService = {
     async createProduct(productData, token) {
-        const productUrl = `${API_URL}/product`;
+        const productUrl = `${API_URL}/products`; // Certifique-se de que a URL está correta
         const headers = {
-            'authorization': token,
+            'Authorization': `Bearer ${token}`, // Certifique-se de que o cabeçalho está correto
             'Content-Type': 'application/json'
         };
         const response = await axios.post(productUrl, productData, { headers });
@@ -15,9 +14,9 @@ const ProductService = {
     },
 
     async getProduct(token) {
-        const productUrl = `${API_URL}/product`;
+        const productUrl = `${API_URL}/products`; // Certifique-se de que a URL está correta
         const headers = {
-            'authorization': token
+            'Authorization': `Bearer ${token}` // Certifique-se de que o cabeçalho está correto
         };
         const response = await axios.get(productUrl, { headers });
         return response.data;
