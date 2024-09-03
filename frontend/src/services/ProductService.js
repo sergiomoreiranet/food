@@ -4,22 +4,40 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 const ProductService = {
     async createProduct(productData, token) {
-        const productUrl = `${API_URL}/products`; // Certifique-se de que a URL está correta
+        const productUrl = `${API_URL}/products`;
+        console.log("Token:", token); // Verifique o token
+        console.log("Dados do produto:", productData); // Verifique os dados enviados
+        
         const headers = {
-            'Authorization': `Bearer ${token}`, // Certifique-se de que o cabeçalho está correto
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         };
-        const response = await axios.post(productUrl, productData, { headers });
-        return response.data;
+        
+        try {
+            const response = await axios.post(productUrl, productData, { headers });
+            console.log("Resposta da API:", response.data); // Verifique a resposta da API
+            return response.data;
+        } catch (error) {
+            console.error("Erro na requisição:", error.response ? error.response.data : error.message);
+            throw error; // Re-throw para tratamento no componente
+        }
     },
 
     async getProduct(token) {
-        const productUrl = `${API_URL}/products`; // Certifique-se de que a URL está correta
+        const productUrl = `${API_URL}/products`;
+        console.log("Token:", token); // Verifique o token
+        
         const headers = {
-            'Authorization': `Bearer ${token}` // Certifique-se de que o cabeçalho está correto
+            'Authorization': `Bearer ${token}`
         };
-        const response = await axios.get(productUrl, { headers });
-        return response.data;
+        
+        try {
+            const response = await axios.get(productUrl, { headers });
+            return response.data;
+        } catch (error) {
+            console.error("Erro na requisição:", error.response ? error.response.data : error.message);
+            throw error; // Re-throw para tratamento no componente
+        }
     }
 };
 

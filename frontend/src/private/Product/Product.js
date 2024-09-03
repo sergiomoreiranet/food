@@ -14,21 +14,21 @@ function Product() {
 
     async function onFormSubmit(event) {
         event.preventDefault();
-        console.log("Formulário submetido"); // Verifica se a função é chamada
+        console.log("Formulário submetido");
 
         const token = localStorage.getItem('token');
 
         try {
-            // Prepare o objeto productData
+            // Prepare o objeto productData com os nomes corretos
             const productData = {
-                name: inputName.current.value,
-                description: inputDescription.current.value,
-                price: parseFloat(inputPrice.current.value),
-                category: inputCategory.current.value,
-                quantity: parseInt(inputQuantity.current.value, 10)
+                nome: inputName.current.value,
+                descricao: inputDescription.current.value,
+                preco: parseFloat(inputPrice.current.value),
+                categoria: inputCategory.current.value,
+                quantidade: parseInt(inputQuantity.current.value, 10)
             };
 
-            console.log("Dados do produto:", productData); // Verifica os dados que estão sendo enviados
+            console.log("Dados do produto:", productData);
 
             // Envie os dados para o serviço
             const result = await ProductService.createProduct(productData, token);
