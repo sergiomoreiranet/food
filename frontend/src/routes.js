@@ -2,8 +2,8 @@ import React from "react";
 import { Route, BrowserRouter, Redirect } from 'react-router-dom';
 import Login from "./public/Login/Login";
 import Settings from "./private/Settings/Settings";
-import Dashboard from "./private/Dashboard/Dashboard";
 import Product from "./private/Product/Product";
+import EditProduct from "./private/Product/EditProduct";
 
 function Routes() {
 
@@ -31,13 +31,15 @@ function Routes() {
                 <Settings />
             </PrivateRoute>
 
-            <PrivateRoute path="/dashboard">
-                <Dashboard />
-            </PrivateRoute>
-
             <PrivateRoute path="/product">
                 <Product />
             </PrivateRoute>
+
+            <PrivateRoute path="/edit">
+                <EditProduct />
+            </PrivateRoute>
+
+
             
         </BrowserRouter>
     )

@@ -34,7 +34,9 @@ async function updateProduct(id, newProductData) {
     if (newProductData.quantidade !== undefined && newProductData.quantidade !== product.quantidade)
         product.quantidade = newProductData.quantidade;
 
-    await product.save();
+    await product.save(); // Correção: Salvar as alterações no banco de dados
+
+    return product; // Certifique-se de retornar o produto atualizado
 }
 
 // Função para criar um novo produto

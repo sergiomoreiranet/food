@@ -3,16 +3,14 @@ const productsRepository = require('../repositories/productsRepository');
 // Função para obter um produto por ID
 async function getProduct(req, res, next) {
     try {
-        const id = parseInt(req.params.id, 10); // Obtém o ID do parâmetro da URL
-        const product = await productsRepository.getProductById(id);
-
+        const id = req.params.id;
+        const product = await productRepository.getProductById(id);
         if (!product) {
             return res.status(404).json({ message: 'Produto não encontrado' });
         }
-
         res.json(product);
     } catch (error) {
-        next(error); // Passa o erro para o middleware de tratamento de erros
+        res.status(500).json({ message: 'Erro ao buscar produto' });
     }
 }
 
@@ -39,16 +37,24 @@ async function createProduct(req, res, next) {
 
 // Função para atualizar um produto
 async function updateProduct(req, res, next) {
-    try {
-        const id = parseInt(req.params.id, 10); // Obtém o ID do parâmetro da URL
-        const newProductData = req.body;
-        const updatedProduct = await productsRepository.updateProduct(id, newProductData);
+    const { id } = req.params;
+    const productData = req.body;
 
+    try {
+        console.log("Dados recebidos para atualização:", id, productData); // Adiciona log
+        
+        // Validação dos dados recebidos
+        if (isNaN(id) || !productData) {
+            return res.status(400).json({ message: 'Dados inválidos' });
+        }
+
+        // Lógica para atualizar o produto no banco de dados
+        const updatedProduct = await productsRepository.updateProduct(id, productData);
         if (!updatedProduct) {
             return res.status(404).json({ message: 'Produto não encontrado' });
         }
 
-        res.json(updatedProduct);
+        res.status(200).json({ message: 'Produto atualizado com sucesso!', product: updatedProduct });
     } catch (error) {
         next(error);
     }

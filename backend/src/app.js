@@ -27,8 +27,47 @@ app.patch('/settings', authMiddleware, settingsController.updateSettings);
 app.get('/products', authMiddleware, productsController.getAllProducts);
 app.get('/products/:id', authMiddleware, productsController.getProduct);
 app.post('/products', authMiddleware, productsController.createProduct);
-app.patch('/products/:id', authMiddleware, productsController.updateProduct);
+
+// Adicione um log para verificar se o middleware de autenticação está sendo chamado
+app.use((req, res, next) => {
+  console.log('Rota acessada:', req.path);
+  console.log('Token recebido:', req.headers.authorization);
+  next();
+});
+
+// Função para extrair o token do cabeçalho de autorização
+const extractToken = (req) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader.substring(7);
+  }
+  return null;
+};
+
+// Rota de atualização de produto modificada
+app.patch('/products/:id', authMiddleware, (req, res, next) => {
+  console.log('Tentando atualizar o produto:', req.params.id);
+  console.log('Corpo da requisição:', req.body);
+  
+  const token = extractToken(req);
+  if (!token) {
+    return res.status(401).json({ message: 'Token não fornecido' });
+  }
+  
+  // Adicione aqui a lógica para verificar e decodificar o token
+  // Se o token for válido, continue com a atualização do produto
+  // Caso contrário, retorne um erro de autenticação
+  
+  productsController.updateProduct(req, res, next);
+});
+
 app.delete('/products/:id', authMiddleware, productsController.deleteProduct);
+
+// Adicione um log no authMiddleware
+app.use(authMiddleware, (req, res, next) => {
+  console.log('Middleware de autenticação passou');
+  next();
+});
 
 // Adicione suas outras rotas conforme necessário
 
