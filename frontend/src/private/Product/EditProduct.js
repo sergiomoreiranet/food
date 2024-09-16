@@ -40,21 +40,34 @@ function EditProduct() {
 
     const handleUpdateProduct = async () => {
         try {
+            console.log("Iniciando atualização do produto");
             const token = localStorage.getItem('token');
             if (!token) {
                 throw new Error('Token não encontrado');
             }
+            console.log("Token encontrado:", token);
 
             if (selectedProduct) {
-                await ProductService.updateProduct(selectedProduct.id, selectedProduct, token);
-                setProducts(products.map(product =>
-                    product.id === selectedProduct.id ? selectedProduct : product
-                ));
+                console.log("Produto selecionado para atualização:", selectedProduct);
+            
+            // Enviar dados atualizados para o ProductService
+            const updatedProduct = await ProductService.updateProduct(selectedProduct.id, selectedProduct, token);
+            
+            console.log("Resposta do servidor após atualização:", updatedProduct);
+            
+            // Atualizar a lista de produtos com o produto atualizado
+            setProducts(prevProducts => prevProducts.map(product =>
+                product.id === updatedProduct.id ? updatedProduct : product
+            ));
                 setSelectedProduct(null);
+                setError('');
+                alert('Produto atualizado com sucesso!');
+            } else {
+                console.log("Nenhum produto selecionado para atualização");
             }
         } catch (error) {
-            console.error("Erro ao atualizar produto:", error);
-            setError('Não foi possível atualizar o produto.');
+            console.error("Erro detalhado ao atualizar produto:", error);
+            setError('Não foi possível atualizar o produto: ' + error.message);
         }
     };
 
@@ -85,25 +98,28 @@ function EditProduct() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {products.map(product => (
-                                        <tr key={product.id}>
-                                            <td>{product.id}</td>
-                                            <td>{product.nome}</td>
-                                            <td>{product.descricao}</td>
-                                            <td>{product.preco}</td>
-                                            <td>{product.categoria}</td>
-                                            <td>{product.quantidade}</td>
-                                            <td>
-                                                <button 
-                                                    className="btn btn-primary btn-sm" 
-                                                    onClick={() => handleEditClick(product)} 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#editProductModal">
-                                                    Editar
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                {products.map(product => {
+                                        const displayProduct = selectedProduct && selectedProduct.id === product.id ? selectedProduct : product;
+                                        return (
+                                            <tr key={displayProduct.id}>
+                                                <td>{displayProduct.id}</td>
+                                                <td>{displayProduct.nome}</td>
+                                                <td>{displayProduct.descricao}</td>
+                                                <td>{displayProduct.preco}</td>
+                                                <td>{displayProduct.categoria}</td>
+                                                <td>{displayProduct.quantidade}</td>
+                                                <td>
+                                                    <button 
+                                                        className="btn btn-primary btn-sm" 
+                                                        onClick={() => handleEditClick(displayProduct)} 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#editProductModal">
+                                                        Editar
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </div>

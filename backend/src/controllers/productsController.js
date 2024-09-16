@@ -38,25 +38,32 @@ async function createProduct(req, res, next) {
 // Função para atualizar um produto
 async function updateProduct(req, res, next) {
     const { id } = req.params;
-    const productData = req.body;
+    const updateData = req.body;
 
     try {
-        console.log("Dados recebidos para atualização:", id, productData); // Adiciona log
-        
-        // Validação dos dados recebidos
-        if (isNaN(id) || !productData) {
-            return res.status(400).json({ message: 'Dados inválidos' });
+        console.log(`Recebendo requisição para atualizar produto ${id}:`, updateData);
+        console.log('Headers da requisição:', req.headers);
+
+        // Verificação de campos obrigatórios
+        const requiredFields = ['nome', 'preco', 'descricao', 'categoria', 'quantidade'];
+        const missingFields = requiredFields.filter(field => !updateData[field]);
+        if (missingFields.length > 0) {
+            console.log(`Campos obrigatórios ausentes: ${missingFields.join(', ')}`);
+            return res.status(400).json({ message: `Campos obrigatórios ausentes: ${missingFields.join(', ')}` });
         }
 
-        // Lógica para atualizar o produto no banco de dados
-        const updatedProduct = await productsRepository.updateProduct(id, productData);
+        const updatedProduct = await productsRepository.updateProduct(id, updateData);
+        
         if (!updatedProduct) {
+            console.log(`Produto com id ${id} não encontrado`);
             return res.status(404).json({ message: 'Produto não encontrado' });
         }
 
-        res.status(200).json({ message: 'Produto atualizado com sucesso!', product: updatedProduct });
+        console.log('Produto atualizado com sucesso:', updatedProduct);
+        res.json(updatedProduct);
     } catch (error) {
-        next(error);
+        console.error('Erro ao atualizar produto:', error);
+        res.status(500).json({ message: 'Erro ao atualizar produto', error: error.message });
     }
 }
 

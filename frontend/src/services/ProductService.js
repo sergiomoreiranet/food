@@ -58,14 +58,23 @@ const ProductService = {
     },
 
     async updateProduct(id, productData, token) {
-        const productUrl = `${API_URL}/products/${id}`;
-
+        console.log(`Iniciando requisição para atualizar produto ${id}`, productData);
         try {
-            // Usando a função createHeaders para os headers
-            const response = await axios.put(productUrl, productData, { headers: createHeaders(token) });
+            const response = await axios.patch(`${API_URL}/products/${id}`, productData, {
+                headers: createHeaders(token)
+            });
+
+            console.log("Resposta do servidor:", response);
+
+            if (response.status !== 200) {
+                console.error("Erro na resposta do servidor:", response.data);
+                throw new Error(`Falha ao atualizar o produto: ${response.data.message || response.statusText}`);
+            }
+
+            console.log("Produto atualizado com sucesso:", response.data);
             return response.data;
         } catch (error) {
-            console.error("Erro na atualização:", error.response ? error.response.data : error.message);
+            console.error("Erro ao atualizar produto:", error.response ? error.response.data : error.message);
             throw error;
         }
     },
