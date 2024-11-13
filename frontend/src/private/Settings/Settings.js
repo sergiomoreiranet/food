@@ -34,8 +34,9 @@ function Settings() {
                 if (err.response && err.response.status === 401);
             })
 
-    }, [])
+    }, []);
 
+    
     function onFormSubmit(event) {
         event.preventDefault();
 

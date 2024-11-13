@@ -61,7 +61,21 @@ app.patch('/products/:id', authMiddleware, (req, res, next) => {
   productsController.updateProduct(req, res, next);
 });
 
-app.delete('/products/:id', authMiddleware, productsController.deleteProduct);
+// Rota de exclusão de produto ajustada
+app.delete('/products/:id', authMiddleware, (req, res, next) => {
+  console.log('Tentando excluir o produto:', req.params.id);
+  
+  const token = extractToken(req);
+  if (!token) {
+    return res.status(401).json({ message: 'Token não fornecido' });
+  }
+  
+  // Adicione aqui a lógica para verificar e decodificar o token
+  // Se o token for válido, continue com a exclusão do produto
+  // Caso contrário, retorne um erro de autenticação
+  
+  productsController.deleteProduct(req, res, next);
+});
 
 // Adicione um log no authMiddleware
 app.use(authMiddleware, (req, res, next) => {

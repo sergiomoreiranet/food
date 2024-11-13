@@ -30,6 +30,27 @@ function EditProduct() {
         setSelectedProduct(product);
     };
 
+    const handleDeleteClick = (id) => {
+        if (window.confirm('Tem certeza que deseja excluir este produto?')) {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setError('Token não encontrado. Por favor, faça login novamente.');
+                return;
+            }
+            ProductService.deleteProduct(id, token)
+                .then(() => {
+                    setProducts(prevProducts => prevProducts.filter(product => product.id !== id));
+                    setError('');
+                    alert('Produto excluído com sucesso!');
+                })
+                .catch(error => {
+                    console.error("Erro ao excluir produto:", error);
+                    setError('Não foi possível excluir o produto. Por favor, tente novamente.');
+                });
+        }
+    };
+    
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setSelectedProduct((prevState) => ({
@@ -93,8 +114,8 @@ function EditProduct() {
                                         <th>Descrição</th>
                                         <th>Preço</th>
                                         <th>Categoria</th>
-                                        <th>Quantidade</th>
-                                        <th>Ações</th>
+                                        <th className="text-center">Quantidade</th>
+                                        <th className="text-center">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -107,14 +128,19 @@ function EditProduct() {
                                                 <td>{displayProduct.descricao}</td>
                                                 <td>{displayProduct.preco}</td>
                                                 <td>{displayProduct.categoria}</td>
-                                                <td>{displayProduct.quantidade}</td>
-                                                <td>
+                                                <td className="text-center">{displayProduct.quantidade}</td>
+                                                <td className="text-center">
                                                     <button 
-                                                        className="btn btn-primary btn-sm" 
+                                                        className="btn btn-primary btn-sm me-2" 
                                                         onClick={() => handleEditClick(displayProduct)} 
                                                         data-bs-toggle="modal" 
                                                         data-bs-target="#editProductModal">
                                                         Editar
+                                                    </button>
+                                                    <button 
+                                                        className="btn btn-danger btn-sm"
+                                                        onClick={() => handleDeleteClick(displayProduct.id)}>
+                                                        Excluir
                                                     </button>
                                                 </td>
                                             </tr>

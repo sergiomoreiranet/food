@@ -53,6 +53,7 @@ async function deleteProduct(id) {
     }
 
     await product.destroy();
+    return { message: 'Produto excluído com sucesso' };
 }
 
 module.exports = {

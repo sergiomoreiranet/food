@@ -71,10 +71,15 @@ async function updateProduct(req, res, next) {
 async function deleteProduct(req, res, next) {
     try {
         const id = parseInt(req.params.id, 10); // Obtém o ID do parâmetro da URL
-        await productsRepository.deleteProduct(id);
-        res.sendStatus(204); // Retorna status 204 (No Content) após exclusão
+        const result = await productsRepository.deleteProduct(id);
+        res.status(200).json({ message: 'Produto excluído com sucesso' });
     } catch (error) {
-        next(error);
+        console.error('Erro ao excluir produto:', error);
+        if (error.message === 'Produto não encontrado') {
+            res.status(404).json({ message: 'Produto não encontrado' });
+        } else {
+            res.status(500).json({ message: 'Erro ao excluir produto', error: error.message });
+        }
     }
 }
 

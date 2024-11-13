@@ -98,6 +98,27 @@ const ProductService = {
             console.error("Erro ao buscar produto:", error.response ? error.response.data : error.message);
             throw error;
         }
+    },
+
+    async deleteProduct(id, token) {
+        const productUrl = `${API_URL}/products/${id}`;
+
+        console.log("Token:", token);
+        console.log("Deletando produto com ID:", id);
+
+        try {
+            if (isNaN(id)) {
+                throw new Error('ID inválido');
+            }
+
+            // Usando a função createHeaders para os headers
+            const response = await axios.delete(productUrl, { headers: createHeaders(token) });
+            console.log("Produto deletado com sucesso:", response.data);
+            return response.data;
+        } catch (error) {
+            console.error("Erro ao deletar produto:", error.response ? error.response.data : error.message);
+            throw error;
+        }
     }
 };
 
